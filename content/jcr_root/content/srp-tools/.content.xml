@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
+    jcr:primaryType="cq:Page">
+    <jcr:content
+        cq:lastModified="{Date}2014-05-19T14:52:18.947-07:00"
+        cq:lastModifiedBy="admin"
+        cq:lastReplicated="{Date}2014-05-19T14:52:27.783-07:00"
+        cq:lastReplicatedBy="admin"
+        cq:lastReplicationAction="Activate"
+        cq:template="/apps/srp-tools/templates/page"
+        jcr:isCheckedOut="{Boolean}true"
+        jcr:language="en"
+        jcr:mixinTypes="[mix:versionable]"
+        jcr:primaryType="cq:PageContent"
+        jcr:title="SRP Tools"
+        jcr:uuid="dd65f150-e376-400b-bf02-abb382c7d5f9"
+        sling:resourceType="/apps/srp-tools/components/page"
+        navTitle="SRP Tools"/>
+</jcr:root>
