@@ -17,6 +17,7 @@ public class ResourceBrowserImpl implements ResourceBrowser {
 
 	@Reference
 	SocialResourceUtilities socialUtils;
+	
 
 	public SRPResource getResourcesForComponent(String contentComponentPath,
 			ResourceResolver resolver) {
@@ -26,6 +27,7 @@ public class ResourceBrowserImpl implements ResourceBrowser {
 				.resourceToUGCStoragePath(componentResource);
 		final SocialResourceProvider srp = socialUtils
 				.getSocialResourceProvider(componentResource);
+		srp.setConfig(socialUtils.getStorageConfig(componentResource));
 		return new SRPResourceImpl(ugcResourcePath, resolver, socialUtils, srp);
 	}
 
