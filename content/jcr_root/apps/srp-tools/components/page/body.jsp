@@ -16,5 +16,5 @@
 %><%@page session="false"%><%
 %><%@ include file="/libs/foundation/global.jsp" %><%
 %><body>
-    <div id="app"></div>
+    <cq:include path="browser" resourceType="srp-tools/components/hbs/browser"/>
 </body>

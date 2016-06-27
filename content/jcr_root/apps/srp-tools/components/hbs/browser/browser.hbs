@@ -1,0 +1,28 @@
+<div data-component-id="{{id}}" data-scf-component="srp-tools/components/hbs/browser" class="scf scf-srp-browser">
+    <div class="container">
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">
+                        SRP Browser
+                    </a>
+                </div>
+            </div>
+        </nav>
+        <div class="row">
+            <div class="col-md-12">
+                <form class="form">
+                    <div class="form-group row">
+                        <div class="col-md-11">
+                            <input type="text" data-attrib="path" class="form-control" placeholder="Path" value="{{path}}">
+                        </div>
+                        <div class="col-md-1">
+                            <button type="submit" class="form-control" class="btn btn-default" evt="click=fetch">Fetch</button>
+                        </div>
+                    </div>
+                    <textarea class="form-control" rows="20">{{jsonString}}</textarea>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

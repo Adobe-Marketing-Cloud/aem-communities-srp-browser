@@ -5,6 +5,5 @@
     cq:lastReplicationAction="Activate"
     jcr:mixinTypes="[cq:ReplicationStatus]"
     jcr:primaryType="cq:ClientLibraryFolder"
-    categories="[cq.social.srp.tools]"
-    dependencies="[cq.shared]"
-    embed="[cq.social.bootstrap.3,cq.social.scf,cq.social.author.srp.tools]"/>
+    categories="[cq.social.author.srp.tools]"
+    dependencies="[cq.social.scf]"/>
