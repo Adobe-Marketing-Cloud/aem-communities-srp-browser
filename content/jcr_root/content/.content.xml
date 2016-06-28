@@ -20,12 +20,13 @@
     <sites/>
     <community-components/>
     <catalogs/>
+    <geometrixx-media/>
     <geometrixx-outdoors/>
     <geometrixx-outdoors-mobile/>
     <geometrixx/>
-    <geometrixx-media/>
     <geometrixx-gov/>
     <we-retail/>
     <oak:index/>
+    <acme/>
     <srp-tools/>
 </jcr:root>
