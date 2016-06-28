@@ -12,10 +12,19 @@
             var that = this;
             $.get(url, function (response) {
                 that.set("json", response);
+                const formatter = new JSONFormatter(response);
+                var tree = document.getElementById("tree");
+                if (!tree.hasChildNodes()){
+                    tree.appendChild(formatter.render());
+
+                }
+                else{
+                    tree.replaceChild(formatter.render(), document.getElementById("srprd"));
+                }
                 that.set("jsonString",JSON.stringify(response));
-                that.trigger('ugc:fetched', {
-                    'model': that
-                });
+//                that.trigger('ugc:fetched', {
+//                    'model': that
+//                });                
             });
         }
     });
@@ -28,7 +37,7 @@
         },
         fetch: function (e) {
             e.preventDefault();
-            console.log("goo");
+            console.log("boo");
             this.model.set("path", this.getField("path"));
             this.model.loadUGC();
             return false;
