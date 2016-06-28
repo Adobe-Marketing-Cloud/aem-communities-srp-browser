@@ -12,13 +12,12 @@
         jcr:mixinTypes="[mix:versionable]"
         jcr:primaryType="cq:PageContent"
         jcr:title="Comments"
-        jcr:uuid="43c90f2b-1825-491a-8447-cd50b850729b"
+        jcr:uuid="a18e8d95-042c-4cbd-be2a-f9c30be474b1"
         sling:resourceType="/apps/srp-tools/components/page"
         navTitle="SRP Tools">
         <content
             jcr:primaryType="nt:unstructured"
-            sling:resourceType="foundation/components/parsys">
-        </content>
+            sling:resourceType="foundation/components/parsys"/>
         <header
             jcr:primaryType="nt:unstructured"
             sling:resourceType="/apps/acme/components/header"/>

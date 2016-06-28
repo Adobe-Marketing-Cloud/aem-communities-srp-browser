@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>FileVault Package Properties</comment>
+<entry key="createdBy">admin</entry>
+<entry key="name">aem-social-srp-tools-package</entry>
+<entry key="lastModified">2016-06-28T15:22:28.410-07:00</entry>
+<entry key="lastModifiedBy">admin</entry>
+<entry key="requiresRestart">false</entry>
+<entry key="acHandling">overwrite</entry>
+<entry key="created">2016-06-28T15:22:28.467-07:00</entry>
+<entry key="buildCount">1</entry>
+<entry key="version">0.0.1-SNAPSHOT</entry>
+<entry key="dependencies"/>
+<entry key="requiresRoot">true</entry>
+<entry key="packageFormatVersion">2</entry>
+<entry key="lastWrapped">2016-06-28T15:22:28.410-07:00</entry>
+<entry key="group">aem/social/srp</entry>
+<entry key="description">AEM Communities - SRP Tools - Package</entry>
+<entry key="lastWrappedBy">admin</entry>
+</properties>

@@ -1,4 +1,2 @@
 #base=.
 browser.js
-#base=json-formatter-js
-dist/bundle.js

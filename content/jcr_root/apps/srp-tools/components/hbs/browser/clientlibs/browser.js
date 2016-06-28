@@ -12,16 +12,6 @@
             var that = this;
             $.get(url, function (response) {
                 that.set("json", response);
-                const formatter = new JSONFormatter(response);
-                var tree = document.getElementById("tree");
-                if (!tree.hasChildNodes()){
-                    tree.appendChild(formatter.render());
-
-                }
-                else{
-                    tree.replaceChild(formatter.render(), document.getElementById("srprd"));
-                }
-                that.set("jsonString",JSON.stringify(response));
 //                that.trigger('ugc:fetched', {
 //                    'model': that
 //                });                
@@ -34,12 +24,19 @@
         className: "scf-browser",
         init: function () {
             this.listenTo(this.model, "ugc:fetched", this.render);
-        },
+        },  
         fetch: function (e) {
             e.preventDefault();
-            console.log("boo");
             this.model.set("path", this.getField("path"));
             this.model.loadUGC();
+            const formatter = new JSONFormatter(this.model.get("json"));
+            var tree = document.getElementById("tree");
+                if (!tree.hasChildNodes()){
+                    tree.appendChild(formatter.render());
+                }
+                else{
+                    tree.replaceChild(formatter.render(), document.getElementById("srprd"));
+                }
             return false;
         }
     });
