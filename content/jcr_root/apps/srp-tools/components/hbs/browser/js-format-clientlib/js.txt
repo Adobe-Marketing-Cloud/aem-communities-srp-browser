@@ -1,2 +1,2 @@
 #base=.
-json-formatter-js/dist/bundle.js
+dist/bundle.js
