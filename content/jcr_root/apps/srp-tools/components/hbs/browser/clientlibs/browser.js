@@ -38,6 +38,17 @@
                     tree.replaceChild(formatter.render(), document.getElementById("srprd"));
                 }
             return false;
+        },
+        displayBase: function(e) {
+            this.model.set("path", "/content");
+            const formatter = new JSONFormatter(this.model.get("json"));
+            var tree = document.getElementById("tree");
+                if (!tree.hasChildNodes()){
+                    tree.appendChild(formatter.render());
+                }
+                else{
+                    tree.replaceChild(formatter.render(), document.getElementById("bigTree"));
+                }
         }
     });
     SCF.Browser = Browser;
