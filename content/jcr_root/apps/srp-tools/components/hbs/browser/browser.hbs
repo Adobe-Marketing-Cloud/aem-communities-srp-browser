@@ -9,18 +9,19 @@
                 </div>
             </div>
         </nav>
+        <div id="tree"></div>
         <div class="row">
             <div class="col-md-12">
                 <form class="form">
                     <div class="form-group row">
                         <div class="col-md-11">
-                            <input type="text" data-attrib="path" class="form-control" placeholder="Path" value="{{path}}">
+                            <input id="bcrumbs" type="text" data-attrib="path" class="form-control" placeholder="/content/" value="/content/">
                         </div>
                         <div class="col-md-1">
-                            <button type="submit" class="form-control" class="btn btn-default" evt="click=fetch">Fetch</button>
+                            <button id="fetch" type="submit" class="form-control" class="btn btn-default" evt="click=fetch">Fetch</button>
                         </div>
                     </div>
-                    <div id="tree"></div>
+                    <div id="json"></div>
                 </form>
             </div>
         </div>
