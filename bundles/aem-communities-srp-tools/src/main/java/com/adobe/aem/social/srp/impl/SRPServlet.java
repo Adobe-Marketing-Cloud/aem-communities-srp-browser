@@ -32,6 +32,7 @@ import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
+import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceNotFoundException;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.servlets.HttpConstants;
@@ -100,15 +101,32 @@ public class SRPServlet extends SlingAllMethodsServlet {
         throws ServletException, IOException {
 
         final String requestedPath = request.getParameter("path");
-
+        
+        final String off = request.getParameter("offset");
+        final String si = request.getParameter("size");
+        // TODO: check if is SRP 
         final ResourceResolver resolver = request.getResourceResolver();
+        final Resource resource = resolver.resolve(requestedPath);
+        final String resourceType = resource.getResourceType();
+        
+        if (off != null && si != null && resourceType != null) {
+            final int offset = Integer.parseInt(off);
+            final int size = Integer.parseInt(si);       
+            
+            final boolean tidy =
+                request.getParameter(TIDY) != null ? Boolean.parseBoolean(request.getParameter(TIDY)) : DEFAULT_TIDY;
+            
+            final SRPResource res = browser.getResourcesForComponent(requestedPath, resolver, offset, size);
+            this.sendResponse(res, response, request, tidy);
+        }
+        else {
+            final boolean tidy =
+                request.getParameter(TIDY) != null ? Boolean.parseBoolean(request.getParameter(TIDY)) : DEFAULT_TIDY;
 
-        final boolean tidy =
-            request.getParameter(TIDY) != null ? Boolean.parseBoolean(request.getParameter(TIDY)) : DEFAULT_TIDY;
-
-        final SRPResource res = browser.getResourcesForComponent(requestedPath, resolver);
-        this.sendResponse(res, response, request, tidy);
-
+            final SRPResource res = browser.getResourcesForComponent(requestedPath, resolver);
+            this.sendResponse(res, response, request, tidy);
+            
+        }
     }
 
     private void sendResponse(final SRPResource resource, final SlingHttpServletResponse response,

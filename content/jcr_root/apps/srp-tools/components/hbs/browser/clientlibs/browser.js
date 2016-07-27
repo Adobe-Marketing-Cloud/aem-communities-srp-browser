@@ -11,15 +11,29 @@
         loadUGC: function () {
             var url = SCF.config.urlRoot + this.get('id') + ".srp.json?path=" + this.get("path");
             var that = this;
-            $.get(url, function (response) {
-                that.set("json", response);
-                that.trigger('ugc:fetched', {
-                    'model': that
+            $.ajax({
+                type: 'GET',
+                url: url,
+                async: false, 
+                success: function (response) {
+                    that.set("json", response);
+                }
                 });                
+        },
+        getJSON: function(node,url) {
+            var json = [];
+            $.ajax({
+                type: 'GET',
+                url: url,
+                async: false, 
+                success: function (response) {
+                json = response;
+                }
             });
+            return json;
         },
         loadFirst: function () {
-            var url = SCF.config.urlRoot + this.get('id') + ".srp.json?path=" + "/content/";
+            var url = SCF.config.urlRoot + this.get('id') + ".srp.json?path=" + "/content";
             var that = this;
             $.ajax({
                 type: 'GET',
@@ -51,20 +65,19 @@
                         var path = json.children[i].path;
                         var final = path.substr(path.lastIndexOf('/') + 1); 
                         newNode.text = final;
-                        newNode.nodes = that.loadTreeData(path);
                         tree[i] = newNode;      
                     }
                 }
             }
-            return tree;
-        }
+            this.navData = tree;
+        },
+        
     });
     var BrowserView = SCF.View.extend({
         viewName: "Browser",
         tagName: "div",
         className: "scf-browser",
         init: function () {
-            //this.listenTo(this.model, "ugc:fetched", this.render);
             this.buildNav();
         },  
         fetch: function (e) {
@@ -80,41 +93,61 @@
                     tree.replaceChild(formatter.render(), document.getElementById("srprd"));
                 }
             return false;
-        },
+        }, 
         buildNav: function () {
-            //e.preventDefault();
             var that = this;
             this.model.set("path", this.getField("path"));
             this.model.loadFirst();
             var data = [];
-            var bigNode = this.model.loadTreeData("/content");
+            this.model.loadTreeData("/content");
+            var bigNode = this.model.navData;
             data = bigNode;
             this.model.set("navData", data);
             $('#tree').treeview({
                 data: this.model.get("navData"),
                 levels: 0,
+                showCheckbox: true,
+                showIcon: false,
                 onNodeSelected: function(event, node) {
-                    var path = "/content/" + that.breadcrumbs(node);
+                    var path = "/content" + that.breadcrumbs(node);
                     $('#bcrumbs').attr("value", path);
-                    console.log(path);
+                },
+                onNodeExpanded: function(event, node) {
+                    if (!node.nodes.length) {
+                        var path = "/content" + that.breadcrumbs(node);
+                        var url = SCF.config.urlRoot + that.model.get('id') + ".srp.json?path=" + path;
+                        var json = that.model.getJSON(node, url);
+                        that.updateTree(node, json);
+                    }
                 }
-//                onNodeExpanded: function(event, node) {
-//                    if (!node.nodes.length) {
-//                        var path = "/content/" + that.breadcrumbs(node);
-//                        var newTree = that.model.loadTreeData(path);
-//                        node.nodes = newTree;
-//                        this.model.set("navData")
-//                    }
-//                }
             });
             return false;
         },
+        updateTree: function(node, json){
+            var that = this;
+            var ab = json.children[0];
+            var abc = json.properties;
+            var i = 0;
+            for (var property in json.properties) {
+                
+            }
+            if (json.children) {
+                var i = 0;
+                for (i = 0; i < json.children.length; i++) {
+                    var newNode = {text: "", nodes: []};
+                    var path = json.children[i].path;
+                    var final = path.substr(path.lastIndexOf('/') + 1); 
+                    newNode.text = final;
+                    var pid = node.nodeId;
+                    $('#tree').treeview('addNode', [newNode, pid]);
+                }
+            }
+        },
         breadcrumbs: function(node) {
             var that = this;
-            //console.log(parent.text);
             if (!(node.length)) {
                 var parent = $('#tree').treeview('getParent', node);
-                return node.text + "/" + that.breadcrumbs(parent);
+                return that.breadcrumbs(parent) + "/" + node.text;
             }
             else{
                 return "";

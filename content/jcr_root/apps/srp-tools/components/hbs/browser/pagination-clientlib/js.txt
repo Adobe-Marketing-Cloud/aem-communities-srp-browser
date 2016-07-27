@@ -1,0 +1,2 @@
+#base=.
+jquery-bootstrap-pagination/vendor/assets/javascripts/jquery-bootstrap-pagination.js

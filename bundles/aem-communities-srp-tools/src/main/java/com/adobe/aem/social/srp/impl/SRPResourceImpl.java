@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceNotFoundException;
@@ -28,7 +29,7 @@ public class SRPResourceImpl implements SRPResource {
     private final SocialResourceProvider srp;
 
     public SRPResourceImpl(final String srpResourcePath, final ResourceResolver resolver,
-        final SocialResourceUtilities socialUtils, final SocialResourceProvider srp) {
+        final SocialResourceUtilities socialUtils, final SocialResourceProvider srp, int offset, int size) {
         this.resolver = resolver;
         this.srp = srp;
         this.socialUtils = socialUtils;
@@ -37,8 +38,24 @@ public class SRPResourceImpl implements SRPResource {
             throw new ResourceNotFoundException(srpResourcePath + " does not exist");
         }
         count = srp.countChildren(srpResource);
-        children = buildChildren(srp.listChildren(srpResource));
+        List<Entry<String, Boolean>> sortBy = new ArrayList<Entry<String, Boolean>>();
+        children = buildChildren(srp.listChildren(srpResourcePath, resolver, offset, size, sortBy));
     }
+    
+    public SRPResourceImpl(final String srpResourcePath, final ResourceResolver resolver,
+            final SocialResourceUtilities socialUtils, final SocialResourceProvider srp) {
+            this.resolver = resolver;
+            this.srp = srp;
+            this.socialUtils = socialUtils;
+            srpResource = srp.getResource(resolver, srpResourcePath);
+            if(srpResource == null) {
+                throw new ResourceNotFoundException(srpResourcePath + " does not exist");
+            }
+            count = srp.countChildren(srpResource);
+            List<Entry<String, Boolean>> sortBy = new ArrayList<Entry<String, Boolean>>();
+
+            children = buildChildren(srp.listChildren(srpResource));
+        }
 
     public SRPResourceImpl(final String srpResourcePath, boolean shallow, final SocialResourceProvider srp,
         final ResourceResolver resolver, final SocialResourceUtilities socialUtils) {

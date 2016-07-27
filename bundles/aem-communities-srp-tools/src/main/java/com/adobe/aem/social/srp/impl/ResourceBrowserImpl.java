@@ -20,7 +20,7 @@ public class ResourceBrowserImpl implements ResourceBrowser {
 	
 
 	public SRPResource getResourcesForComponent(String contentComponentPath,
-			ResourceResolver resolver) {
+			ResourceResolver resolver, int offset, int size) {
 		final Resource componentResource = resolver
 				.getResource(contentComponentPath);
 		final String ugcResourcePath = socialUtils
@@ -28,11 +28,23 @@ public class ResourceBrowserImpl implements ResourceBrowser {
 		final SocialResourceProvider srp = socialUtils
 				.getSocialResourceProvider(componentResource);
 		srp.setConfig(socialUtils.getStorageConfig(componentResource));
-		return new SRPResourceImpl(ugcResourcePath, resolver, socialUtils, srp);
+		return new SRPResourceImpl(ugcResourcePath, resolver, socialUtils, srp, offset, size);
 	}
+	
 
 	public SRPResource getUGCResource(String ugcPath, ResourceResolver resolver) {
 		return null;
 	}
+
+    public SRPResource getResourcesForComponent(String contentComponentPath, ResourceResolver resolver) {
+        final Resource componentResource = resolver
+                .getResource(contentComponentPath);
+        final String ugcResourcePath = socialUtils
+                .resourceToUGCStoragePath(componentResource);
+        final SocialResourceProvider srp = socialUtils
+                .getSocialResourceProvider(componentResource);
+        srp.setConfig(socialUtils.getStorageConfig(componentResource));
+        return new SRPResourceImpl(ugcResourcePath, resolver, socialUtils, srp);
+    }
 
 }

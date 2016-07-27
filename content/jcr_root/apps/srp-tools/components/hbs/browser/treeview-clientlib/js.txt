@@ -1,2 +1,2 @@
 #base=.
-bootstrap-treeview/dist/bootstrap-treeview.min.js
+bootstrap-treeview/dist/bootstrap-treeview.js
