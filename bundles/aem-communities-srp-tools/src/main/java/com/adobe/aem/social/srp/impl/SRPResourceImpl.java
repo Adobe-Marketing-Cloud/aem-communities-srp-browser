@@ -18,6 +18,7 @@ import com.adobe.aem.social.srp.api.SRPResource;
 import com.adobe.cq.social.srp.SocialResource;
 import com.adobe.cq.social.srp.SocialResourceProvider;
 import com.adobe.cq.social.srp.utilities.api.SocialResourceUtilities;
+import com.adobe.cq.social.ugcbase.core.SocialResourceUtils;
 
 public class SRPResourceImpl implements SRPResource {
 
@@ -37,9 +38,14 @@ public class SRPResourceImpl implements SRPResource {
         if(srpResource == null) {
             throw new ResourceNotFoundException(srpResourcePath + " does not exist");
         }
+        
+        String componentResourcePath = socialUtils.ugcToResourcePath(srpResource);
+        
+        
         count = srp.countChildren(srpResource);
+       
         List<Entry<String, Boolean>> sortBy = new ArrayList<Entry<String, Boolean>>();
-        children = buildChildren(srp.listChildren(srpResourcePath, resolver, offset, size, sortBy));
+        children = buildChildren(srp.listChildren(componentResourcePath, resolver, offset, size, sortBy));
     }
     
     public SRPResourceImpl(final String srpResourcePath, final ResourceResolver resolver,

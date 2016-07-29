@@ -108,7 +108,6 @@ public class SRPServlet extends SlingAllMethodsServlet {
         final ResourceResolver resolver = request.getResourceResolver();
         final Resource resource = resolver.resolve(requestedPath);
         final String resourceType = resource.getResourceType();
-        
         if (off != null && si != null && resourceType != null) {
             final int offset = Integer.parseInt(off);
             final int size = Integer.parseInt(si);       
