@@ -41,7 +41,6 @@ public class SRPResourceImpl implements SRPResource {
         
         String componentResourcePath = socialUtils.ugcToResourcePath(srpResource);
         
-        
         count = srp.countChildren(srpResource);
        
         List<Entry<String, Boolean>> sortBy = new ArrayList<Entry<String, Boolean>>();

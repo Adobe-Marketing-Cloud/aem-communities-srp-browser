@@ -6,10 +6,11 @@
             navData: [],
             path: "/",
             json: {},
-            jsonString: ""
+            jsonString: "",
+            size: 5
         },
-        loadUGC: function () {
-            var url = SCF.config.urlRoot + this.get('id') + ".srp.json?path=" + this.get("path");
+        loadUGC: function (size) {
+            var url = SCF.config.urlRoot + this.get('id') + ".srp.json?path=" + this.get("path") + "&offset=0&size="+size;
             var that = this;
             $.ajax({
                 type: 'GET',
@@ -32,8 +33,8 @@
             });
             return json;
         },
-        loadFirst: function () {
-            var url = SCF.config.urlRoot + this.get('id') + ".srp.json?path=" + "/content";
+        loadFirst: function (size) {
+            var url = SCF.config.urlRoot + this.get('id') + ".srp.json?path=" + "/content" + "&offset=0&size=" + size;
             var that = this;
             $.ajax({
                 type: 'GET',
@@ -44,10 +45,10 @@
                 }
                 });
         },
-        loadTreeData: function(path) {
+        loadTreeData: function(path, size) {
             var that = this;
             var json = {};
-            var url = SCF.config.urlRoot + this.get('id') + ".srp.json?path=" + path;
+            var url = SCF.config.urlRoot + this.get('id') + ".srp.json?path=" + path + "&offset=0&size=" + size;
             $.ajax({
                 type: 'GET',
                 url: url,
@@ -77,13 +78,15 @@
         viewName: "Browser",
         tagName: "div",
         className: "scf-browser",
+        size: 5,
         init: function () {
             this.buildNav();
         },  
-        fetch: function (e) {
+        fetch: function (e, size) {
+            var size = 5;
             e.preventDefault();
             this.model.set("path", this.getField("path"));
-            this.model.loadUGC();
+            this.model.loadUGC(size);
             const formatter = new JSONFormatter(this.model.get("json"));
             var tree = document.getElementById("json");
                 if (!tree.hasChildNodes()){
@@ -96,8 +99,9 @@
         }, 
         buildNav: function () {
             var that = this;
+            var size = 5;
             this.model.set("path", this.getField("path"));
-            this.model.loadFirst();
+            this.model.loadFirst(size);
             var data = [];
             this.model.loadTreeData("/content");
             var bigNode = this.model.navData;
@@ -113,24 +117,19 @@
                     $('#bcrumbs').attr("value", path);
                 },
                 onNodeExpanded: function(event, node) {
+                    var offset = 0;
                     if (!node.nodes.length) {
                         var path = "/content" + that.breadcrumbs(node);
-                        var url = SCF.config.urlRoot + that.model.get('id') + ".srp.json?path=" + path;
+                        var url = SCF.config.urlRoot + that.model.get('id') + ".srp.json?path=" + path + "&offset=" + offset + "&size="+size;
                         var json = that.model.getJSON(node, url);
-                        that.updateTree(node, json);
+                        that.updateTree(node, json, size);
                     }
                 }
             });
             return false;
         },
-        updateTree: function(node, json){
+        updateTree: function(node, json, size, offset){
             var that = this;
-            var ab = json.children[0];
-            var abc = json.properties;
-            var i = 0;
-            for (var property in json.properties) {
-                
-            }
             if (json.children) {
                 var i = 0;
                 for (i = 0; i < json.children.length; i++) {
@@ -141,6 +140,10 @@
                     var pid = node.nodeId;
                     $('#tree').treeview('addNode', [newNode, pid]);
                 }
+                if (json.children.length==size){
+                        var newNode = {text:"See more", nodes:[]};
+                        $('#tree').treeview('addNode', [newNode, pid]);
+                    } 
             }
         },
         breadcrumbs: function(node) {
