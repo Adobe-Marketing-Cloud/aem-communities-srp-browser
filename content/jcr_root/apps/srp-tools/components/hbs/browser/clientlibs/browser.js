@@ -107,6 +107,7 @@
             var bigNode = this.model.navData;
             data = bigNode;
             this.model.set("navData", data);
+            Node.prototype.level = 0;
             $('#tree').treeview({
                 data: this.model.get("navData"),
                 levels: 0,
@@ -118,7 +119,16 @@
                 },
                 onNodeExpanded: function(event, node) {
                     var offset = 0;
-                    if (!node.nodes.length) {
+                    if (!node.nodes.length && !(node.text == "See more")) {
+                        var path = "/content" + that.breadcrumbs(node);
+                        var url = SCF.config.urlRoot + that.model.get('id') + ".srp.json?path=" + path + "&offset=" + offset + "&size="+size;
+                        var json = that.model.getJSON(node, url);
+                        that.updateTree(node, json, size);
+                    }
+                    else if (!node.nodes.length && (node.text == "See more")) {
+                        var parent = $('#tree').treeview('getParent', node);
+                        console.log(node.count);
+                        offset = offset + node.count*size;
                         var path = "/content" + that.breadcrumbs(node);
                         var url = SCF.config.urlRoot + that.model.get('id') + ".srp.json?path=" + path + "&offset=" + offset + "&size="+size;
                         var json = that.model.getJSON(node, url);
@@ -133,7 +143,7 @@
             if (json.children) {
                 var i = 0;
                 for (i = 0; i < json.children.length; i++) {
-                    var newNode = {text: "", nodes: []};
+                    var newNode = {text: "", nodes: [], count: 0};
                     var path = json.children[i].path;
                     var final = path.substr(path.lastIndexOf('/') + 1); 
                     newNode.text = final;
@@ -141,16 +151,22 @@
                     $('#tree').treeview('addNode', [newNode, pid]);
                 }
                 if (json.children.length==size){
-                        var newNode = {text:"See more", nodes:[]};
+                        var newCount = node.count + 1;
+                        var newNode = {text:"See more", nodes:[], count: newCount};
+                        
                         $('#tree').treeview('addNode', [newNode, pid]);
                     } 
             }
         },
         breadcrumbs: function(node) {
             var that = this;
-            if (!(node.length)) {
+            if (!(node.length) && node.text != "See more") {
                 var parent = $('#tree').treeview('getParent', node);
                 return that.breadcrumbs(parent) + "/" + node.text;
+            }
+            else if (!(node.length) && node.text == "See more"){
+                var parent = $('#tree').treeview('getParent', node);
+                return that.breadcrumbs(parent);
             }
             else{
                 return "";
