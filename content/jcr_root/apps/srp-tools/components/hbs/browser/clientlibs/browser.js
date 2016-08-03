@@ -114,25 +114,26 @@
                 showCheckbox: true,
                 showIcon: false,
                 onNodeSelected: function(event, node) {
-                    var path = "/content" + that.breadcrumbs(node);
+                    var path = "/content/usergenerated/asi/jcr/content" + that.breadcrumbs(node);
                     $('#bcrumbs').attr("value", path);
                 },
                 onNodeExpanded: function(event, node) {
                     var offset = 0;
                     if (!node.nodes.length && !(node.text == "See more")) {
-                        var path = "/content" + that.breadcrumbs(node);
+                        var path = "/content/usergenerated/asi/jcr/content" + that.breadcrumbs(node);
                         var url = SCF.config.urlRoot + that.model.get('id') + ".srp.json?path=" + path + "&offset=" + offset + "&size="+size;
                         var json = that.model.getJSON(node, url);
                         that.updateTree(node, json, size);
                     }
                     else if (!node.nodes.length && (node.text == "See more")) {
                         var parent = $('#tree').treeview('getParent', node);
-                        console.log(node.count);
-                        offset = offset + node.count*size;
-                        var path = "/content" + that.breadcrumbs(node);
+                        parent.count++;
+                        console.log(parent.count);
+                        offset = offset + parent.count*size;
+                        var path = "/content/usergenerated/asi/jcr/content" + that.breadcrumbs(node);
                         var url = SCF.config.urlRoot + that.model.get('id') + ".srp.json?path=" + path + "&offset=" + offset + "&size="+size;
                         var json = that.model.getJSON(node, url);
-                        that.updateTree(node, json, size);
+                        that.appendChildren(parent, node, json, size, offset);
                     }
                 }
             });
@@ -140,7 +141,7 @@
         },
         updateTree: function(node, json, size, offset){
             var that = this;
-            if (json.children) {
+            if (json.children && node.text != "See more") {
                 var i = 0;
                 for (i = 0; i < json.children.length; i++) {
                     var newNode = {text: "", nodes: [], count: 0};
@@ -152,6 +153,30 @@
                 }
                 if (json.children.length==size){
                         var newCount = node.count + 1;
+                        var newNode = {text:"See more", nodes:[], count: newCount};
+                        
+                        $('#tree').treeview('addNode', [newNode, pid]);
+                    } 
+            }
+        },
+        appendChildren: function(parent, selected, json, size, offset){
+            var that = this;
+            if (json.children && selected.text == "See more") {
+                var i = 0;
+                var pid = selected.nodeId;
+                var path = json.children[i].path;
+                var final = path.substr(path.lastIndexOf('/') + 1); 
+                $('#tree').treeview('updateNodeText', [pid, final]);
+                for (i = 1; i < json.children.length; i++) {
+                    var newNode = {text: "", nodes: [], count: 0};
+                    var path = json.children[i].path;
+                    var final = path.substr(path.lastIndexOf('/') + 1); 
+                    newNode.text = final;
+                    var pid = parent.nodeId;
+                    $('#tree').treeview('addNode', [newNode, pid]);
+                }
+                if (json.children.length==size){
+                        var newCount = parent.count + 1;
                         var newNode = {text:"See more", nodes:[], count: newCount};
                         
                         $('#tree').treeview('addNode', [newNode, pid]);

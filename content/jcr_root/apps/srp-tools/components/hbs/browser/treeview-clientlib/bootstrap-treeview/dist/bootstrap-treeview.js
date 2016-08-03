@@ -100,7 +100,9 @@
 			clearSearch: $.proxy(this.clearSearch, this),
 
             addNode: $.proxy(this.addNode, this),
-            addNodes: $.proxy(this.addNodes, this)
+            addNodes: $.proxy(this.addNodes, this),
+            
+            updateNodeText: $.proxy(this.updateNodeText, this)
 		};
 	};
 
@@ -113,6 +115,13 @@
     Tree.prototype.addNodes = function (nodes, parentId) {
         var _parentNode = this.getNode(parentId);
         _parentNode.nodes = _parentNode.nodes.concat(nodes);
+        this.setInitialStates(_parentNode, _parentNode.level);
+    };
+    
+    Tree.prototype.updateNodeText = function (parentId, text) {
+        var _parentNode = this.getNode(parentId);
+        _parentNode.text = text; 
+        _parentNode.state.expanded = false;
         this.setInitialStates(_parentNode, _parentNode.level);
     };
 

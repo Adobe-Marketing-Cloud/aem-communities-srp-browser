@@ -104,13 +104,12 @@ public class SRPServlet extends SlingAllMethodsServlet {
         
         final String off = request.getParameter("offset");
         final String si = request.getParameter("size");
-        // TODO: check if is SRP 
         final ResourceResolver resolver = request.getResourceResolver();
         final Resource resource = resolver.resolve(requestedPath);
         String componentResourcePath = socialUtils.ugcToResourcePath(resource);
         final Resource resource1 = resolver.resolve(componentResourcePath );
         final String resourceType = resource1.getResourceType();
-        if (off != null && si != null && resourceType.startsWith("social")) {
+        if (off != null && si != null && (resourceType.startsWith("social") || resourceType.startsWith("granite"))) {
             final int offset = Integer.parseInt(off);
             final int size = Integer.parseInt(si);       
             
