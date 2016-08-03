@@ -24,6 +24,7 @@ import com.adobe.cq.social.ugcbase.SocialUtils;
 public class SRPResourceImpl implements SRPResource {
 
     private Resource srpResource;
+    private Resource requestResource;
     private final long count;
     private final List<SRPResource> children;
     private final ResourceResolver resolver;
@@ -36,6 +37,7 @@ public class SRPResourceImpl implements SRPResource {
         this.resolver = resolver;
         this.srp = srp;
         this.socialUtils = socialUtils;
+        this.requestResource = resolver.resolve(srpResourcePath);
         srpResource = getResource(srp, resolver, srpResourcePath);
         if (srpResource == null) {
             throw new ResourceNotFoundException(srpResourcePath + " does not exist");
@@ -48,8 +50,8 @@ public class SRPResourceImpl implements SRPResource {
         List<Entry<String, Boolean>> sortBy = new ArrayList<Entry<String, Boolean>>();
         children = buildChildren(srp.listChildren(componentResourcePath, resolver, offset, size, sortBy));
         contentChildren =
-            srpResource instanceof SocialResource ? buildContentChildren(resolver.resolve(socialUtils
-                .ugcToResourcePath(srpResourcePath))) : buildContentChildren(srpResource);
+            requestResource instanceof SocialResource ? Collections.<SRPResource>emptyList()
+                : buildContentChildren(requestResource);
     }
 
     public SRPResourceImpl(final String srpResourcePath, final ResourceResolver resolver,
@@ -58,17 +60,17 @@ public class SRPResourceImpl implements SRPResource {
         this.srp = srp;
         this.socialUtils = socialUtils;
         srpResource = getResource(srp, resolver, srpResourcePath);
+        this.requestResource = resolver.resolve(srpResourcePath);
 
         if (srpResource == null) {
             throw new ResourceNotFoundException(srpResourcePath + " does not exist");
         }
         count = srp.countChildren(srpResource);
-        List<Entry<String, Boolean>> sortBy = new ArrayList<Entry<String, Boolean>>();
 
         children = buildChildren(srp.listChildren(srpResource));
         contentChildren =
-            srpResource instanceof SocialResource ? buildContentChildren(resolver.resolve(socialUtils
-                .ugcToResourcePath(srpResourcePath))) : buildContentChildren(srpResource);
+            requestResource instanceof SocialResource ? Collections.<SRPResource>emptyList()
+                : buildContentChildren(requestResource);
     }
 
     private List<SRPResource> buildContentChildren(Resource resource) {
@@ -91,15 +93,15 @@ public class SRPResourceImpl implements SRPResource {
         this.srp = srp;
         this.socialUtils = socialUtils;
         srpResource = getResource(srp, resolver, srpResourcePath);
+        this.requestResource = resolver.resolve(srpResourcePath);
         if (srpResource == null) {
             throw new ResourceNotFoundException(srpResourcePath + " does not exist");
         }
         children = shallow ? Collections.<SRPResource>emptyList() : buildChildren(srp.listChildren(srpResource));
         count = shallow ? 0 : srp.countChildren(srpResource);
         contentChildren =
-            shallow ? Collections.<SRPResource>emptyList() : srpResource instanceof SocialResource
-                ? buildContentChildren(resolver.resolve(socialUtils.ugcToResourcePath(srpResourcePath)))
-                : buildContentChildren(srpResource);
+            shallow || requestResource instanceof SocialResource  ? Collections.<SRPResource>emptyList()
+                : buildContentChildren(requestResource);
     }
 
     public SRPResourceImpl(Resource resource, boolean shallow, SocialResourceProvider srp, ResourceResolver resolver,
@@ -108,12 +110,12 @@ public class SRPResourceImpl implements SRPResource {
         this.srp = srp;
         this.socialUtils = socialUtils;
         srpResource = resource;
+        this.requestResource = resource;
         children = shallow ? Collections.<SRPResource>emptyList() : buildChildren(srp.listChildren(srpResource));
         count = shallow ? 0 : srp.countChildren(srpResource);
         contentChildren =
-            shallow ? Collections.<SRPResource>emptyList() : srpResource instanceof SocialResource
-                ? buildContentChildren(resolver.resolve(socialUtils.ugcToResourcePath(resource.getPath())))
-                : buildContentChildren(srpResource);
+            shallow || requestResource instanceof SocialResource  ? Collections.<SRPResource>emptyList()
+                : buildContentChildren(requestResource);
     }
 
     private List<SRPResource> buildChildren(Iterator<Resource> listChildren) {
