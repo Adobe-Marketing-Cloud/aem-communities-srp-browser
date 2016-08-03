@@ -31,7 +31,7 @@ public class ResourceBrowserImpl implements ResourceBrowser {
     }
 
     public SRPResource getResourcesForComponent(String contentComponentPath, ResourceResolver resolver) {
-        final Resource componentResource = resolver.getResource(contentComponentPath);
+        final Resource componentResource = resolver.resolve(contentComponentPath);
         final SocialResourceProvider srp = socialUtils.getSocialResourceProvider(componentResource);
         srp.setConfig(socialUtils.getStorageConfig(componentResource));
         return new SRPResourceImpl(contentComponentPath, resolver, socialUtils, srp);
