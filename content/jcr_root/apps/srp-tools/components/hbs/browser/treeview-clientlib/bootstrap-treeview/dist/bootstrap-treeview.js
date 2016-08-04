@@ -102,7 +102,8 @@
             addNode: $.proxy(this.addNode, this),
             addNodes: $.proxy(this.addNodes, this),
             
-            updateNodeText: $.proxy(this.updateNodeText, this)
+            updateNodeText: $.proxy(this.updateNodeText, this),
+            updateNodeColor: $.proxy(this.updateNodeColor, this)
 		};
 	};
 
@@ -121,6 +122,12 @@
     Tree.prototype.updateNodeText = function (parentId, text) {
         var _parentNode = this.getNode(parentId);
         _parentNode.text = text; 
+        _parentNode.state.expanded = false;
+        this.setInitialStates(_parentNode, _parentNode.level);
+    };
+    Tree.prototype.updateNodeColor = function (parentId, color) {
+        var _parentNode = this.getNode(parentId);
+        _parentNode.color = color; 
         _parentNode.state.expanded = false;
         this.setInitialStates(_parentNode, _parentNode.level);
     };
