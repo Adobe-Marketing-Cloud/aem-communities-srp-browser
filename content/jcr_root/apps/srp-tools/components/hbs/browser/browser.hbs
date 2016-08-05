@@ -9,12 +9,7 @@
                 </div>
             </div>
         </nav>
-        <div class="row">
-            <div class="col-md-12">
-                <div id="json"></div>
-            </div>
-        </div>
-        <form class="form">
+        <form class="form" id="content-tree-form">
                     <div class="form-group row">
                         <div class="col-md-11">
                             <input id="bcrumbs" type="text" data-attrib="path" class="form-control" placeholder="/content" value="/content">
@@ -22,9 +17,57 @@
                         <div class="col-md-1">
                             <button id="fetch" type="submit" class="form-control" class="btn btn-default" evt="click=fetch">Fetch</button>
                         </div>
-                    </div>  
-                </form>
-        <div id="tree"></div>
+                    </div>
+                    <div id="content-tree">
+                        <nav class="navbar navbar-default">
+                            <div class="container-fluid">
+                                <div class="navbar-header">
+                                    <a class="navbar-brand">
+                                        Content
+                                    </a>
+                                </div>
+                            </div>
+                        </nav>
+                        <div style="overflow-y: scroll; height:500px; overflow-x: scroll; border-radius: 10px; border: 1px solid #ccc">
+                            <div id="tree1"></div>
+                        </div>
+                    </div>
+                    
+                    <div id="json-content">
+                        <nav class="navbar navbar-default">
+                            <div class="container-fluid">
+                                <div class="navbar-header">
+                                    <a class="navbar-brand">
+                                        JSON
+                                    </a>
+                                </div>
+                            </div>
+                        </nav>
+                        <div style="overflow-y: scroll; height:500px; overflow-x: scroll; border-radius: 10px; border: 1px solid #ccc">
+                            <div id="json"></div>
+                        </div>
+                    </div>
+                    <div id="ugc-tree">
+                        <nav class="navbar navbar-default">
+                            <div class="container-fluid">
+                                <div class="navbar-header">
+                                    <a class="navbar-brand">
+                                        UGC
+                                    </a>
+                                </div>
+                            </div>
+                        </nav>
+                        <div style="overflow-y: scroll; height:500px; overflow-x: scroll; border-radius: 10px; border: 1px solid #ccc">
+                            <div id="tree2"></div>
+                        </div>
+                    </div>
+                    
+                    
+        </form>
+        
+        
+        
+        
     </div>
 </div>
 

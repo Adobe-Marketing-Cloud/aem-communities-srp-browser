@@ -1,3 +1,2 @@
 #base=.
 browser.js
-breadcrumbs.js

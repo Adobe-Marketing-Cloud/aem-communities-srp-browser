@@ -1,0 +1,14 @@
+#json-content {
+    float: right;
+    width: 33.333%;
+}
+#content-tree {
+    margin-top: 0px;
+    float: left !important;
+    width: 33.333% !important;
+}
+
+#ugc-tree {
+    width: 33.333% !important;
+    float: right;
+}

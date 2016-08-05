@@ -131,6 +131,12 @@
         _parentNode.state.expanded = false;
         this.setInitialStates(_parentNode, _parentNode.level);
     };
+    Tree.prototype.updateNodePath = function (parentId, path) {
+        var _parentNode = this.getNode(parentId);
+        _parentNode.path = path; 
+        _parentNode.state.expanded = false;
+        this.setInitialStates(_parentNode, _parentNode.level);
+    };
 
 	Tree.prototype.init = function (options) {
 
