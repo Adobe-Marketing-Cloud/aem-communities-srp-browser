@@ -11,13 +11,16 @@
         </nav>
         <form class="form" id="content-tree-form">
                     <div class="form-group row">
-                        <div class="col-md-11">
+                        <div class="col-md-12">
                             <input id="bcrumbs" type="text" data-attrib="path" class="form-control" placeholder="/content" value="/content">
                         </div>
+<!--
                         <div class="col-md-1">
                             <button id="fetch" type="submit" class="form-control" class="btn btn-default" evt="click=fetch">Fetch</button>
                         </div>
+-->
                     </div>
+            
                     <div id="content-tree">
                         <nav class="navbar navbar-default">
                             <div class="container-fluid">
@@ -54,20 +57,23 @@
                                     <a class="navbar-brand">
                                         UGC
                                     </a>
+                                    
                                 </div>
+                                
                             </div>
+                            
                         </nav>
-                        <div style="overflow-y: scroll; height:500px; overflow-x: scroll; border-radius: 10px; border: 1px solid #ccc">
+                        <div id = "ugcContainer" style="overflow-y: scroll; height:500px; overflow-x: scroll; border-radius: 10px; border: 1px solid #ccc">
                             <div id="tree2"></div>
                         </div>
-                    </div>
-                    
-                    
-        </form>
-        
-        
-        
-        
+<!--
+                        <div class="form-group">
+                                        <label for="usr">Display:</label>
+                                        <input id="size" type="text" class="form-control" id="usr">
+                        </div>
+-->
+                    </div>     
+        </form>      
     </div>
 </div>
 

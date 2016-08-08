@@ -98,10 +98,13 @@
 			// Search methods
 			search: $.proxy(this.search, this),
 			clearSearch: $.proxy(this.clearSearch, this),
-
+            
+            // Node add methods
             addNode: $.proxy(this.addNode, this),
             addNodes: $.proxy(this.addNodes, this),
+            addRoot: $.proxy(this.addRoot, this),
             
+            // Node update methods
             updateNodeText: $.proxy(this.updateNodeText, this),
             updateNodeColor: $.proxy(this.updateNodeColor, this)
 		};
@@ -117,6 +120,12 @@
         var _parentNode = this.getNode(parentId);
         _parentNode.nodes = _parentNode.nodes.concat(nodes);
         this.setInitialStates(_parentNode, _parentNode.level);
+    };
+    
+    Tree.prototype.addRoot = function (node) {
+        this.tree.push(node);
+        this.setInitialStates({ nodes: this.tree }, 0);
+    
     };
     
     Tree.prototype.updateNodeText = function (parentId, text) {

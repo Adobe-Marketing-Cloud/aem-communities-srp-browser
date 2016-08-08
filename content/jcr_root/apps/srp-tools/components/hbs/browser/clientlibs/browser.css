@@ -12,3 +12,11 @@
     width: 33.333% !important;
     float: right;
 }
+
+#ugcContainer {
+    position: relative;
+}
+#paginate {
+    position: absolute;
+    bottom: 0;
+}
