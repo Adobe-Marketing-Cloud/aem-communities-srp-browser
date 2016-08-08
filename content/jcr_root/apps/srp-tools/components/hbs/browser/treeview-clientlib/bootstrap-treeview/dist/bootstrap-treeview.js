@@ -99,10 +99,11 @@
 			search: $.proxy(this.search, this),
 			clearSearch: $.proxy(this.clearSearch, this),
             
-            // Node add methods
+            // Node add/remove methods
             addNode: $.proxy(this.addNode, this),
             addNodes: $.proxy(this.addNodes, this),
             addRoot: $.proxy(this.addRoot, this),
+            removeRoot: $.proxy(this.removeRoot, this),
             
             // Node update methods
             updateNodeText: $.proxy(this.updateNodeText, this),
@@ -124,6 +125,15 @@
     
     Tree.prototype.addRoot = function (node) {
         this.tree.push(node);
+        this.setInitialStates({ nodes: this.tree }, 0);
+    
+    };
+    
+    Tree.prototype.removeRoot = function (node) {
+        var index = array.indexOf(node);
+        if (index > -1) {
+            array.splice(index, 1);
+        }
         this.setInitialStates({ nodes: this.tree }, 0);
     
     };

@@ -211,7 +211,7 @@
                     var contentParentJson = that.model.getJSON(contentParent, contentParentURL);
                     
                     if (node.type != "expand"){
-                        that.updateUGCTree(treeSelector, node, json, size);
+                        that.updateUGCTree(treeSelector, node, json, size, offset);
                     }
                     else {
                         that.appendChildren(treeSelector, contentParent, root, node, contentParentJson, size, offset)          
@@ -238,19 +238,19 @@
             if (json.children && node.text != "See more") {
                 var i = 0;
                 for (i = 0; i < json.children.length; i++) {
-                    var path = json.contentChildren[i].path;
-                    var newNode = {text: "", nodes: [], count: 0, path: path, type: "content"};
+                    var path = json.children[i].path;
+                    var newNode = {text: "", nodes: [], count: 0, path: path, type: "content", color: "#4E0FE3"};
                     var final = path.substr(path.lastIndexOf('/') + 1); 
                     newNode.text = final;
                     var pid = node.nodeId;
                     selector.treeview('addNode', [newNode, pid]);
                 }
-                if (json.children.length==size){
-                        var newCount = node.count + 1;
-                        var newNode = {text:"See more", nodes:[], color: "#4E0FE3", count: newCount, path: ""};
-                        
-                        selector.treeview('addNode', [newNode, pid]);
-                } 
+//                if (json.children.length==size){
+//                        var newCount = node.count + 1;
+//                        var newNode = {text:"See more", nodes:[], color: "#4E0FE3", count: newCount, path: ""};
+//                        
+//                        selector.treeview('addNode', [newNode, pid]);
+//                } 
             }
         },
         appendChildren: function(selector, contentParent, root, selected, json, size, offset){
@@ -278,20 +278,20 @@
                 } 
             }
         },
-        breadcrumbs: function(selector, node) {
-            var that = this;
-            if (!(node.length) && node.text != "See more") {
-                var parent = selector.treeview('getParent', node);
-                return that.breadcrumbs(selector, parent) + "/" + node.text;
-            }
-            else if (!(node.length) && node.text == "See more"){
-                var parent = selector.treeview('getParent', node);
-                return that.breadcrumbs(selector, parent);
-            }
-            else{
-                return "";
-            }
-        }
+//        breadcrumbs: function(selector, node) {
+//            var that = this;
+//            if (!(node.length) && node.text != "See more") {
+//                var parent = selector.treeview('getParent', node);
+//                return that.breadcrumbs(selector, parent) + "/" + node.text;
+//            }
+//            else if (!(node.length) && node.text == "See more"){
+//                var parent = selector.treeview('getParent', node);
+//                return that.breadcrumbs(selector, parent);
+//            }
+//            else{
+//                return "";
+//            }
+//        }
     });
     SCF.Browser = Browser;
     SCF.BrowserView = BrowserView;
