@@ -19,7 +19,7 @@
                 success: function (response) {
                     that.set("json", response);
                 }
-                });                
+            });                
         },
         getJSON: function(node,url) {
             var json = [];
@@ -39,7 +39,7 @@
 //            $.ajax({
 //                type: 'GET',
 //                url: url,
-//                async: false, 
+//                async: true, 
 //                success: function (response) {
 //                    that.set("json", response);
 //                }
@@ -56,7 +56,7 @@
                 success: function (response) {
                     json = response;
                 }
-                });
+            });
             var tree = [];
             if (json.path){
                 if (json.children && type == "ugc"){
@@ -94,7 +94,7 @@
                 success: function (response) {
                     json = response;
                 }
-                });
+            });
             var tree = [];
             if (json.path){
                 if (json.children && type == "ugc"){
@@ -135,6 +135,7 @@
         init: function () {
             var selector = $('#tree1');
             this.buildContentNav(selector);
+            this.fetch(event, 5);
         },  
         fetch: function (e, size) {
             var size = 5;
@@ -150,7 +151,26 @@
                     tree.replaceChild(formatter.render(), document.getElementById("srprd"));
                 }
             return false;
-        }, 
+        },
+        getPathArray: function(e) {
+            this.fetch(e, 5);
+            this.model.set("path", this.getField("path"));
+            var path = this.getField("path");
+            var array = path.split("/");
+            var l = array.length - 1;
+            for (var i = 0; i < array.length; i++){
+                var nodes = $('#tree1').treeview('search', [ array[i], {
+                    ignoreCase: true,     // case insensitive
+                    exactMatch: true,    // like or equals
+                    revealResults: false,  // reveal matching nodes
+                }]);
+                if (nodes.length > 0){
+                    //$('#tree1').treeview("expandNode", [nodes[0]]);
+                    //$('#tree1').treeview("clearSearch");
+                }
+            }
+            return false;
+        },
         buildContentNav: function (treeSelector) {
             var that = this;
             var size = 5;
@@ -235,7 +255,7 @@
         },
         updateUGCTree: function(selector,node, json, size, offset){
             var that = this;
-            if (json.children && node.text != "See more") {
+            if (json.children && node.nodes.length == 0) {
                 var i = 0;
                 for (i = 0; i < json.children.length; i++) {
                     var path = json.children[i].path;
@@ -292,6 +312,7 @@
 //                return "";
 //            }
 //        }
+        
     });
     SCF.Browser = Browser;
     SCF.BrowserView = BrowserView;

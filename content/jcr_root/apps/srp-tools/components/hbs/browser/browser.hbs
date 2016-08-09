@@ -15,62 +15,66 @@
                             <input id="bcrumbs" type="text" data-attrib="path" class="form-control" placeholder="/content" value="/content">
                         </div>
                         <div class="col-md-1">
-                            <button id="fetch" type="submit" class="form-control" class="btn btn-default" evt="click=fetch">Go</button>
+                            <button id="fetch" type="submit" class="form-control" class="btn btn-default" evt="click=getPathArray">Fetch</button>
                         </div>
                     </div>
-            
-                    <div id="content-tree">
-                        <nav class="navbar navbar-default">
-                            <div class="container-fluid">
-                                <div class="navbar-header">
-                                    <a class="navbar-brand">
-                                        Content
-                                    </a>
+                    <div class="box" id="content-tree">
+                        <div>
+                            <nav class="navbar navbar-default" style="height: 50px">
+                                <div class="container-fluid">
+                                    <div class="navbar-header">
+                                        <a class="navbar-brand">
+                                            Content
+                                        </a>
+                                    </div>
                                 </div>
+                            </nav>
+                            <div class="content-display">
+                                <div id="tree1"></div>
                             </div>
-                        </nav>
-                        <div style="overflow-y: scroll; height:500px; overflow-x: scroll; border-radius: 10px; border: 1px solid #ccc">
-                            <div id="tree1"></div>
                         </div>
                     </div>
-                    
-                    <div id="json-content">
-                        <nav class="navbar navbar-default">
-                            <div class="container-fluid">
-                                <div class="navbar-header">
-                                    <a class="navbar-brand">
-                                        JSON
-                                    </a>
+                    <div class="box"  id="json-content">
+                        <div>
+                            <nav class="navbar navbar-default" style="height: 50px">
+                                <div class="container-fluid">
+                                    <div class="navbar-header">
+                                        <a class="navbar-brand">
+                                            JSON
+                                        </a>
+                                    </div>
                                 </div>
+                            </nav>
+                            <div class="content-display">
+                                <div id="json"></div>
                             </div>
-                        </nav>
-                        <div style="overflow-y: scroll; height:500px; overflow-x: scroll; border-radius: 10px; border: 1px solid #ccc">
-                            <div id="json"></div>
                         </div>
                     </div>
-                    <div id="ugc-tree">
-                        <nav class="navbar navbar-default">
-                            <div class="container-fluid">
-                                <div class="navbar-header">
-                                    <a class="navbar-brand">
-                                        UGC
-                                    </a>
-                                    
+                    <div class="box" id="ugc-tree">
+                            <nav class="navbar navbar-default" style="height:50px">
+                                <div class="container-fluid">
+                                    <div class="navbar-header">
+                                        <a class="navbar-brand">
+                                            UGC
+                                        </a>
+
+                                    </div>
+
                                 </div>
-                                
+
+                            </nav>
+                        
+                         
+                            <div id = "ugcContainer" class="content-display">
+                                <div id="tree2"></div>
                             </div>
-                            
-                        </nav>
-                        <div id = "ugcContainer" style="overflow-y: scroll; height:500px; overflow-x: scroll; border-radius: 10px; border: 1px solid #ccc">
-                            <div id="tree2"></div>
-                        </div>
-<!--
-                        <div class="form-group">
-                                        <label for="usr">Display:</label>
-                                        <input id="size" type="text" class="form-control" id="usr">
-                        </div>
--->
-                    </div>     
+    <!--
+                            <div class="form-group">
+                                            <label for="usr">Display:</label>
+                                            <input id="size" type="text" class="form-control" id="usr">
+                            </div>
+    -->
+                        </div> 
         </form>      
     </div>
 </div>

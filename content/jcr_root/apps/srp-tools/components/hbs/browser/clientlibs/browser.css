@@ -1,22 +1,41 @@
 #json-content {
     float: right;
-    width: 33.333%;
+    width: 30%;
 }
 #content-tree {
-    margin-top: 0px;
     float: left !important;
-    width: 33.333% !important;
+    width: 30% !important;
 }
 
 #ugc-tree {
-    width: 33.333% !important;
-    float: right;
+    margin-left: auto;
+    margin-right: auto;
+    width: 30% !important;
 }
 
 #ugcContainer {
     position: relative;
 }
-#paginate {
-    position: absolute;
-    bottom: 0;
+
+.box {
+/*    border: 1px solid #ccc;*/
+    height:500px;
+    border-radius: 10px; 
+}
+
+.middle-tree{
+    padding-right: 50px;
+    border: 1px solid #ccc;
+    height:500px;
+    border-radius: 10px; 
+}
+
+.content-display {
+    overflow-y: scroll; 
+    height:422px; 
+    overflow-x: scroll; 
+/*
+    border-radius: 10px; 
+    border: 1px solid #ccc
+*/
 }
