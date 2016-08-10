@@ -33,18 +33,6 @@
             });
             return json;
         },
-//        loadFirst: function (size) {
-//            var url = SCF.config.urlRoot + this.get('id') + ".srp.json?path=" + "/content" + "&offset=0&size=" + size;
-//            var that = this;
-//            $.ajax({
-//                type: 'GET',
-//                url: url,
-//                async: true, 
-//                success: function (response) {
-//                    that.set("json", response);
-//                }
-//                });
-//        },
         loadContentData: function(path, size, type) {
             var that = this;
             var json = {};
@@ -111,16 +99,6 @@
                     var newNode = {text: "See more", nodes: [], color: "#4E0FE3", path: path, type: "expand"};
                     tree[json.children.length] = newNode;
                 }
-//                if (json.contentChildren && type == "content") {
-//                var i = 0;
-//                for (i = 0; i < json.contentChildren.length; i++) {
-//                    var path = json.contentChildren[i].path;
-//                    var newNode = {text: "", nodes: [], path: path, type: "content"};
-//                    var final = path.substr(path.lastIndexOf('/') + 1); 
-//                    newNode.text = final;
-//                    tree[i] = newNode;
-//                }
-//            }
             }
             this.navData = tree;
             return tree; 
@@ -135,8 +113,20 @@
         init: function () {
             var selector = $('#tree1');
             this.buildContentNav(selector);
-            this.fetch(event, 5);
-        },  
+        },
+        constructURL: function(path, size, offset) {
+            var that = this;
+            if (size != null || offset != null) {
+                var url = SCF.config.urlRoot + that.model.get('id') + ".srp.json?path=" + path + "&offset=" + offset + "&size="+size;
+            }
+            else {
+                var url = SCF.config.urlRoot + that.model.get('id') + ".srp.json?path=" + path;
+            }
+            return url;
+        }, 
+        getSize: function() {
+            return 5;
+        },
         fetch: function (e, size) {
             var size = 5;
             e.preventDefault();
@@ -153,11 +143,9 @@
             return false;
         },
         getPathArray: function(e) {
-            this.fetch(e, 5);
             this.model.set("path", this.getField("path"));
             var path = this.getField("path");
             var array = path.split("/");
-            var l = array.length - 1;
             for (var i = 0; i < array.length; i++){
                 var nodes = $('#tree1').treeview('search', [ array[i], {
                     ignoreCase: true,     // case insensitive
@@ -165,20 +153,18 @@
                     revealResults: false,  // reveal matching nodes
                 }]);
                 if (nodes.length > 0){
-                    //$('#tree1').treeview("expandNode", [nodes[0]]);
-                    //$('#tree1').treeview("clearSearch");
+                    $('#tree1').treeview("expandNode", [nodes[0]]);
+                    $('#tree1').treeview("clearSearch");
                 }
             }
+            $('#tree1').treeview("selectNode", [nodes[0]]);
             return false;
         },
-        buildContentNav: function (treeSelector) {
+        buildContentNav: function (treeSelector, size) {
             var that = this;
-            var size = 5;
-            //this.model.set("path", this.getField("path"));
             var data = [];
             var bigNode = this.model.loadContentData("/content", size, "content");
             data = bigNode;
-            //this.model.set("navData", data);
             treeSelector.treeview({
                 data: data,
                 levels: 0,
@@ -187,21 +173,30 @@
                 onNodeSelected: function(event, node) {
                     var path = node.path;
                     $('#bcrumbs').attr("value", path);
-                    that.fetch(event, size);
+                    that.fetch(event, that.getSize());
                 },
                 onNodeExpanded: function(event, node) {
-                    var offset = 0;
-                    var url = SCF.config.urlRoot + that.model.get('id') + ".srp.json?path=" + node.path + "&offset=" + offset + "&size="+size;
+                    var url = that.constructURL(node.path);
                     var json = that.model.getJSON(node, url);
-//                    if (json.contentChildren != 0){
-                        that.updateContentTree(treeSelector, node, json, size);
-//                    }
-//                    if (json.children.length!=0){
-                        that.buildUGCNav($('#tree2'), json, size, offset, node);
-//                    }
+                    // update the content tree
+                    that.updateContentTree(treeSelector, node, json, size);
+                    // show new UGC tree in the middle column
+                    that.buildUGCNav($('#tree2'), json, that.getSize(), 0, node);
                 }
             });
             return false;
+        },
+        updateContentTree: function(selector,node, json, size, offset){
+            var that = this;
+                var i = 0;
+                for (i = 0; i < json.contentChildren.length; i++) {
+                    var path = json.contentChildren[i].path;
+                    var newNode = {text: "", nodes: [], count: 0, path: path, type: "content"};
+                    var final = path.substr(path.lastIndexOf('/') + 1); 
+                    newNode.text = final;
+                    var pid = node.nodeId;
+                    selector.treeview('addNode', [newNode, pid]);
+            }
         },
         buildUGCNav: function (treeSelector, json, size, index, contentParent) {
             var that = this;
@@ -221,15 +216,13 @@
                     that.fetch(event, size);
                 },
                 onNodeExpanded: function(event, node) {
+                    var size = 5;
                     var offset = contentParent.count*size;
                     var root = treeSelector.treeview('getParent', node);
-                    var url = SCF.config.urlRoot + that.model.get('id') + ".srp.json?path=" + node.path + "&offset=" + offset + "&size="+size;
-                    var json = that.model.getJSON(node, url);
-                    
-                    var contentParentURL = SCF.config.urlRoot + that.model.get('id') + ".srp.json?path=" + contentParent.path + "&offset=" + offset + "&size="+size;
-                    
+                    var url = that.constructURL(node.path, size, offset);
+                    var json = that.model.getJSON(node, url); 
+                    var contentParentURL = that.constructURL(contentParent.path, size, offset);
                     var contentParentJson = that.model.getJSON(contentParent, contentParentURL);
-                    
                     if (node.type != "expand"){
                         that.updateUGCTree(treeSelector, node, json, size, offset);
                     }
@@ -238,20 +231,6 @@
                     }
                 }
             });
-        },
-        updateContentTree: function(selector,node, json, size, offset){
-            var that = this;
-            if (json.contentChildren && node.text != "See more") {
-                var i = 0;
-                for (i = 0; i < json.contentChildren.length; i++) {
-                    var path = json.contentChildren[i].path;
-                    var newNode = {text: "", nodes: [], count: 0, path: path, type: "content"};
-                    var final = path.substr(path.lastIndexOf('/') + 1); 
-                    newNode.text = final;
-                    var pid = node.nodeId;
-                    selector.treeview('addNode', [newNode, pid]);
-                }
-            }
         },
         updateUGCTree: function(selector,node, json, size, offset){
             var that = this;
@@ -265,12 +244,6 @@
                     var pid = node.nodeId;
                     selector.treeview('addNode', [newNode, pid]);
                 }
-//                if (json.children.length==size){
-//                        var newCount = node.count + 1;
-//                        var newNode = {text:"See more", nodes:[], color: "#4E0FE3", count: newCount, path: ""};
-//                        
-//                        selector.treeview('addNode', [newNode, pid]);
-//                } 
             }
         },
         appendChildren: function(selector, contentParent, root, selected, json, size, offset){
@@ -297,22 +270,7 @@
                         selector.treeview('addRoot', [newNode]);
                 } 
             }
-        },
-//        breadcrumbs: function(selector, node) {
-//            var that = this;
-//            if (!(node.length) && node.text != "See more") {
-//                var parent = selector.treeview('getParent', node);
-//                return that.breadcrumbs(selector, parent) + "/" + node.text;
-//            }
-//            else if (!(node.length) && node.text == "See more"){
-//                var parent = selector.treeview('getParent', node);
-//                return that.breadcrumbs(selector, parent);
-//            }
-//            else{
-//                return "";
-//            }
-//        }
-        
+        }
     });
     SCF.Browser = Browser;
     SCF.BrowserView = BrowserView;
