@@ -104,6 +104,7 @@ public class SRPServlet extends SlingAllMethodsServlet {
         
         final String off = request.getParameter("offset");
         final String si = request.getParameter("size");
+        
         final ResourceResolver resolver = request.getResourceResolver();
         final Resource resource = resolver.resolve(requestedPath);
         String componentResourcePath = socialUtils.ugcToResourcePath(resource);
