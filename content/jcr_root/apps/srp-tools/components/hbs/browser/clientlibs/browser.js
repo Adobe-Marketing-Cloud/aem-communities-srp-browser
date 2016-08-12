@@ -3,9 +3,10 @@
     var Browser = SCF.Model.extend({
         modelName: "BrowserModel",
         defaults: {
-            navData: [],
             size: 5
         },
+        
+        // construct a url from the path, size, and offset 
         constructURL: function(path, size, offset) {
             var that = this;
             if (size != null || offset != null) {
@@ -16,6 +17,8 @@
             }
             return url;
         }, 
+        
+        // fetch json by making an ajax call to the url 
         getJSON: function(url) {
             var json = [];
             $.ajax({
@@ -44,6 +47,7 @@
             var selector = $("#"+this.contentDisplayId);
             this.buildContentTree(selector);
         },
+        
         // create a node from a dictionary of key value pairings
         createNode: function(dict) {
             var node = {};
@@ -58,10 +62,13 @@
             }
             return node;
         },
+        
         // return pagination size 
         getSize: function() {
             return 5;
         },
+        
+        // fetch JSON based on text in the text path bar
         fetch: function (e) {
             e.preventDefault();
             var url = this.model.constructURL(this.getField("path"));
@@ -69,6 +76,7 @@
             this.renderJSON(json);
             return false;
         },
+        
         // displays the JSON under the JSON display using json formatting clientlib 
         renderJSON: function(json){
             // no need to show the child nodes because they are displayed in the content/ugc trees
@@ -83,6 +91,8 @@
                     tree.replaceChild(formatter.render(), document.getElementById("srprd"));
                 }
         },
+        
+        // render a path in the text path bar 
         displayPath: function(path) {
             var pathSelector = $("#" + this.pathDisplayId);
             pathSelector.attr("value", path)
@@ -92,7 +102,6 @@
         
         // content array is used to render the content tree via bootstrap-treeview clientlib
         buildContentArray: function(path, size) {
-            //var that = this;
             var url = this.model.constructURL(path, size, 0);
             var json = this.model.getJSON(url);
             var tree = [];
@@ -100,12 +109,13 @@
             for (i = 0; i < json.contentChildren.length; i++) {
                 var path = json.contentChildren[i].path;
                 var final = path.substr(path.lastIndexOf('/') + 1); 
-                var newNode = this.createNode({text:final, path:this.basePath, type:"content", nodes: [], count: 0});
+                var newNode = this.createNode({text:final, path:path, type:"content", nodes: [], count: 0});
                 tree[i] = newNode;
             }
             this.navData = tree;
             return tree; 
         },
+        
         // building content tree via bootstrap-treeview clientlib
         buildContentTree: function (treeSelector, size) {
             var that = this;
@@ -122,50 +132,54 @@
                     that.renderJSON(json);
                 },
                 onNodeExpanded: function(event, node) {
-                    var url = that.model.constructURL(node.path);
-                    var json = that.model.getJSON(url);
-                    // update the content tree
-                    that.updateContentTree(treeSelector, node, json, size);
-                    // show new UGC tree in the middle column
-                    var ugcDisplaySelector = $('#'+that.ugcDisplayId);
-                    that.buildUGCTree(ugcDisplaySelector, json, that.getSize(), 0, node);
+                    if (node.nodes.length == 0) {
+                        var url = that.model.constructURL(node.path);
+                        var json = that.model.getJSON(url);
+                        // update the content tree
+                        that.updateContentTree(treeSelector, node, json, size);
+                        // show new UGC tree in the middle column
+                        var ugcDisplaySelector = $('#'+that.ugcDisplayId);
+                        that.buildUGCTree(ugcDisplaySelector, json, that.getSize(), 0, node);
+                    }
                 }
             });
             return false;
         },
+        
         // update content tree on node expand 
         updateContentTree: function(selector,node, json, size, offset){
-            var that = this;
             var i = 0;
             for (i = 0; i < json.contentChildren.length; i++) {
                 var path = json.contentChildren[i].path;
                 var final = path.substr(path.lastIndexOf('/') + 1); 
-                var newNode = that.createNode({text: final, path: path, type:"content", nodes: [], count: 0});
+                var newNode = this.createNode({text: final, path: path, type:"content", nodes: [], count: 0});
                 var pid = node.nodeId;
                 selector.treeview('addNode', [newNode, pid]);
             }
         },
         
         // UGC tree logic 
+        
+        // ugc array is used to render the ugc tree via bootstrap-treeview clientlib
         buildUGCArray: function(path, size, type) {
-            var that = this;
-            var url = that.model.constructURL(path, size, 0);
-            var json = that.model.getJSON(url);
+            var url = this.model.constructURL(path, size, 0);
+            var json = this.model.getJSON(url);
             var tree = [];
             var i = 0;
             for (i = 0; i < json.children.length; i++){
                 var path = json.children[i].path;
                 var final = path.substr(path.lastIndexOf('/') + 1); 
-                var newNode = this.createNode({text:final, color: that.ugcNodeColor, path: path, type:"UGC", nodes: []})
+                var newNode = this.createNode({text:final, color: this.ugcNodeColor, path: path, type:"UGC", nodes: []})
                 tree[i] = newNode;      
             }  
             if (json.children.length == size) {
-                var newNode = this.createNode({text: "See more", nodes: [], color: that.ugcNodeColor, path: path, type: "expand"});
+                var newNode = this.createNode({text: "See more", nodes: [], color: this.ugcNodeColor, path: path, type: "expand"});
                 tree[json.children.length] = newNode;
             }
-            this.navData = tree;
             return tree; 
         },
+        
+        // rendering ugc tree via bootstrap-treeview clientlib
         buildUGCTree: function (treeSelector, json, size, index, contentParent) {
             var that = this;
             if (json.children.length == size) {
@@ -185,23 +199,26 @@
                     that.renderJSON(json);
                 },
                 onNodeExpanded: function(event, node) {
-                    var root = treeSelector.treeview('getParent', node);
-                    var url = that.model.constructURL(node.path, size, offset);
-                    var json = that.model.getJSON(url); 
-                    if (node.type != "expand"){
-                        that.updateUGCTree(treeSelector, node, json);
-                    }
-                    else if (node.type == "expand") {
-                        contentParent.count++;
-                        var size = that.getSize();
-                        var offset = contentParent.count*size;
-                        var contentParentURL = that.model.constructURL(contentParent.path, size, offset);
-                        var contentParentJson = that.model.getJSON(contentParentURL);
-                        that.appendUGCChildren(treeSelector, contentParent, root, node, contentParentJson, size);
+                    if (node.nodes.length == 0) {                        
+                        if (node.type != "expand"){
+                            var url = that.model.constructURL(node.path, size, offset);
+                            var json = that.model.getJSON(url); 
+                            that.updateUGCTree(treeSelector, node, json);
+                        }
+                        else if (node.type == "expand") {
+                            contentParent.count++;
+                            var size = that.getSize();
+                            var offset = contentParent.count*size;
+                            var contentParentURL = that.model.constructURL(contentParent.path, size, offset);
+                            var contentParentJson = that.model.getJSON(contentParentURL);
+                            that.appendUGCChildren(treeSelector, contentParent, node, contentParentJson, size);
+                        }
                     }
                 }
             });
         },
+        
+        // update the ugc tree upon node expand 
         updateUGCTree: function(selector,node, json){
             if (json.children && node.nodes.length == 0) {
                 var i = 0;
@@ -215,7 +232,9 @@
                 }
             }
         },
-        appendUGCChildren: function(selector, contentParent, root, selected, json, size, offset){
+        
+        // append additonal children to the UGC tree upon expansion of a see more node
+        appendUGCChildren: function(selector, contentParent, selected, json, size, offset){
             selector.treeview('removeRoot', [selected]);
             for (var i = 0; i < json.children.length; i++) {
                 var path = json.children[i].path;
@@ -224,7 +243,7 @@
                 selector.treeview('addNode', [newNode]);                
             }
             if (json.children.length==size){
-                var newNode = {text:"See more", nodes:[], color: this.ugcNodeColor, type:"expand"};
+                var newNode = this.createNode({text:"See more", nodes:[], color: this.ugcNodeColor, type:"expand"});
                 selector.treeview('addNode', [newNode]);
             } 
         }
