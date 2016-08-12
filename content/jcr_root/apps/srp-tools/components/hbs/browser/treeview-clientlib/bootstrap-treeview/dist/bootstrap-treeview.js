@@ -112,9 +112,15 @@
 	};
 
     Tree.prototype.addNode = function (node, parentId) {
-        var _parentNode = this.getNode(parentId);
-        _parentNode.nodes.push(node);
-        this.setInitialStates(_parentNode, _parentNode.level);
+        if (parentId == null) {
+            this.tree.push(node);
+            this.setInitialStates({ nodes: this.tree }, 0);
+        }
+        else {
+            var _parentNode = this.getNode(parentId);
+            _parentNode.nodes.push(node);
+            this.setInitialStates(_parentNode, _parentNode.level);
+        }
     };
 
     Tree.prototype.addNodes = function (nodes, parentId) {
@@ -130,10 +136,11 @@
     };
     
     Tree.prototype.removeRoot = function (node) {
-        var index = array.indexOf(node);
+        var index = this.tree.indexOf(this.getNode(node.nodeId));
         if (index > -1) {
-            array.splice(index, 1);
+            this.tree.splice(index, 1);
         }
+        //delete this.tree[node];
         this.setInitialStates({ nodes: this.tree }, 0);
     
     };

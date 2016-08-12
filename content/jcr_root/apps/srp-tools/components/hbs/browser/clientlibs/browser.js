@@ -38,22 +38,34 @@
         jsonDisplayId: "json",
         pathDisplayId: "path",
         ugcNodeColor: "#4E0FE3",
+        basePath: "/content",
+        jsonInitLevel: 1,
         init: function () {
             var selector = $("#"+this.contentDisplayId);
             this.buildContentTree(selector);
         },
-        createNode: function(name, path, type) {
-            var node = {text: name, nodes: [], path: path, type: type, count: 0};
+        // create a node from a dictionary of key value pairings
+        createNode: function(dict) {
+            var node = {};
+            var keys = [];
+            for (var key in dict) {
+                if (dict.hasOwnProperty(key)) {
+                    keys.push(key);
+                }
+            }
+            for (key in dict) {
+                node[key] = dict[key];
+            }
             return node;
         },
+        // return pagination size 
         getSize: function() {
             return 5;
         },
         fetch: function (e) {
-            var that = this;
             e.preventDefault();
-            var url = that.model.constructURL(this.getField("path"));
-            var json = that.model.getJSON(url);
+            var url = this.model.constructURL(this.getField("path"));
+            var json = this.model.getJSON(url);
             this.renderJSON(json);
             return false;
         },
@@ -62,7 +74,7 @@
             // no need to show the child nodes because they are displayed in the content/ugc trees
             delete json.contentChildren;
             delete json.children;
-            const formatter = new JSONFormatter(json,Infinity);
+            const formatter = new JSONFormatter(json, this.jsonInitLevel);
             var tree = document.getElementById(this.jsonDisplayId);
                 if (!tree.hasChildNodes()){
                     tree.appendChild(formatter.render());
@@ -79,25 +91,25 @@
         // Content tree Logic
         
         // content array is used to render the content tree via bootstrap-treeview clientlib
-        buildContentArray: function(path, size, type) {
-            var that = this;
-            var url = that.model.constructURL(path, size, 0);
-            var json = that.model.getJSON(url);
+        buildContentArray: function(path, size) {
+            //var that = this;
+            var url = this.model.constructURL(path, size, 0);
+            var json = this.model.getJSON(url);
             var tree = [];
             var i = 0;
             for (i = 0; i < json.contentChildren.length; i++) {
                 var path = json.contentChildren[i].path;
                 var final = path.substr(path.lastIndexOf('/') + 1); 
-                var newNode = this.createNode(final, path, "content");
+                var newNode = this.createNode({text:final, path:this.basePath, type:"content", nodes: [], count: 0});
                 tree[i] = newNode;
             }
             this.navData = tree;
             return tree; 
         },
+        // building content tree via bootstrap-treeview clientlib
         buildContentTree: function (treeSelector, size) {
             var that = this;
-            var data = this.buildContentArray("/content", size, "content");
-            // building tree via bootstrap-treeview clientlib
+            var data = this.buildContentArray(this.basePath, size);
             treeSelector.treeview({
                 data: data,
                 levels: 0,
@@ -115,18 +127,20 @@
                     // update the content tree
                     that.updateContentTree(treeSelector, node, json, size);
                     // show new UGC tree in the middle column
-                    that.buildUGCTree($('#tree2'), json, that.getSize(), 0, node);
+                    var ugcDisplaySelector = $('#'+that.ugcDisplayId);
+                    that.buildUGCTree(ugcDisplaySelector, json, that.getSize(), 0, node);
                 }
             });
             return false;
         },
+        // update content tree on node expand 
         updateContentTree: function(selector,node, json, size, offset){
             var that = this;
             var i = 0;
             for (i = 0; i < json.contentChildren.length; i++) {
                 var path = json.contentChildren[i].path;
                 var final = path.substr(path.lastIndexOf('/') + 1); 
-                var newNode = that.createNode(final, path, "content");
+                var newNode = that.createNode({text: final, path: path, type:"content", nodes: [], count: 0});
                 var pid = node.nodeId;
                 selector.treeview('addNode', [newNode, pid]);
             }
@@ -138,21 +152,16 @@
             var url = that.model.constructURL(path, size, 0);
             var json = that.model.getJSON(url);
             var tree = [];
-            if (json.path){
-                if (json.children && type == "ugc"){
-                    var i = 0;
-                    for (i = 0; i < json.children.length; i++){
-                        var path = json.children[i].path;
-                        var newNode = {text: "", nodes: [], color: that.ugcNodeColor, path: path, type: "UGC"};
-                        var final = path.substr(path.lastIndexOf('/') + 1); 
-                        newNode.text = final;
-                        tree[i] = newNode;      
-                    }  
-                }
-                if (json.children.length == size) {
-                    var newNode = {text: "See more", nodes: [], color: that.ugcNodeColor, path: path, type: "expand"};
-                    tree[json.children.length] = newNode;
-                }
+            var i = 0;
+            for (i = 0; i < json.children.length; i++){
+                var path = json.children[i].path;
+                var final = path.substr(path.lastIndexOf('/') + 1); 
+                var newNode = this.createNode({text:final, color: that.ugcNodeColor, path: path, type:"UGC", nodes: []})
+                tree[i] = newNode;      
+            }  
+            if (json.children.length == size) {
+                var newNode = this.createNode({text: "See more", nodes: [], color: that.ugcNodeColor, path: path, type: "expand"});
+                tree[json.children.length] = newNode;
             }
             this.navData = tree;
             return tree; 
@@ -188,18 +197,17 @@
                         var offset = contentParent.count*size;
                         var contentParentURL = that.model.constructURL(contentParent.path, size, offset);
                         var contentParentJson = that.model.getJSON(contentParentURL);
-                        that.appendChildren(treeSelector, contentParent, root, node, contentParentJson, size);
+                        that.appendUGCChildren(treeSelector, contentParent, root, node, contentParentJson, size);
                     }
                 }
             });
         },
         updateUGCTree: function(selector,node, json){
-            var that = this;
             if (json.children && node.nodes.length == 0) {
                 var i = 0;
                 for (i = 0; i < json.children.length; i++) {
                     var path = json.children[i].path;
-                    var newNode = {text: "", nodes: [], count: 0, path: path, type: "content", color: this.ugcNodeColor};
+                    var newNode = {text: "", nodes: [], path: path, type: "content", color: this.ugcNodeColor};
                     var final = path.substr(path.lastIndexOf('/') + 1); 
                     newNode.text = final;
                     var pid = node.nodeId;
@@ -207,28 +215,18 @@
                 }
             }
         },
-        appendChildren: function(selector, contentParent, root, selected, json, size, offset){
-            var that = this;
-            if (json.children && selected.text == "See more") {
-                var i = 0;
-                var pid = selected.nodeId;
+        appendUGCChildren: function(selector, contentParent, root, selected, json, size, offset){
+            selector.treeview('removeRoot', [selected]);
+            for (var i = 0; i < json.children.length; i++) {
                 var path = json.children[i].path;
                 var final = path.substr(path.lastIndexOf('/') + 1); 
-                selector.treeview('updateNodeText', [pid, final]);
-                selector.treeview('updateNodeColor', [pid, that.ugcNodeColor]);
-                $('#tree').treeview('updateNodePath', [pid, path]);
-                for (i = 1; i < json.children.length; i++) {
-                    var newNode = {text: "", nodes: [], count: 0, color: this.ugcNodeColor, type: "UGC", path:json.children[i].path };
-                    var path = json.children[i].path;
-                    var final = path.substr(path.lastIndexOf('/') + 1); 
-                    newNode.text = final;
-                    selector.treeview('addRoot', [newNode]);
-                }
-                if (json.children.length==size){
-                        var newNode = {text:"See more", nodes:[], color: this.ugcNodeColor, type:"expand"};
-                        selector.treeview('addRoot', [newNode]);
-                } 
+                var newNode = this.createNode({text: final, nodes: [], count: 0, color: this.ugcNodeColor, type: "UGC", path:json.children[i].path });
+                selector.treeview('addNode', [newNode]);                
             }
+            if (json.children.length==size){
+                var newNode = {text:"See more", nodes:[], color: this.ugcNodeColor, type:"expand"};
+                selector.treeview('addNode', [newNode]);
+            } 
         }
     });
     SCF.Browser = Browser;
