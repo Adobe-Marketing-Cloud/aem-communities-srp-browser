@@ -6,4 +6,4 @@
     jcr:mixinTypes="[cq:ReplicationStatus]"
     jcr:primaryType="cq:ClientLibraryFolder"
     categories="[cq.social.author.srp.tools]"
-    dependencies="[cq.social.scf,formatting]"/>
+    dependencies="[cq.social.scf,cq.social.srp.formatting,cq.social.srp.tree,cq.social.srp.paginate]"/>

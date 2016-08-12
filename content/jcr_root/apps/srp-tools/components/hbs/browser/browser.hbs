@@ -9,20 +9,73 @@
                 </div>
             </div>
         </nav>
-        <div class="row">
-            <div class="col-md-12">
-                <form class="form">
+        <form class="form" id="content-tree-form">
                     <div class="form-group row">
                         <div class="col-md-11">
-                            <input type="text" data-attrib="path" class="form-control" placeholder="Path" value="{{path}}">
+                            <input id="path" type="text" data-attrib="path" class="form-control" placeholder="/content" value="/content">
                         </div>
                         <div class="col-md-1">
-                            <button type="submit" class="form-control" class="btn btn-default" evt="click=fetch">Fetch</button>
+                            <button id="fetch" type="submit" class="form-control" class="btn btn-default" evt="click=fetch">Fetch</button>
                         </div>
                     </div>
-                    <div id="tree"></div>
-                </form>
-            </div>
-        </div>
+                    <div class="box" id="content-tree">
+                        <div>
+                            <nav class="navbar navbar-default" style="height: 50px">
+                                <div class="container-fluid">
+                                    <div class="navbar-header">
+                                        <a class="navbar-brand">
+                                            Content
+                                        </a>
+                                    </div>
+                                </div>
+                            </nav>
+                            <div class="content-display">
+                                <div id="tree1"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box"  id="json-content">
+                        <div>
+                            <nav class="navbar navbar-default" style="height: 50px">
+                                <div class="container-fluid">
+                                    <div class="navbar-header">
+                                        <a class="navbar-brand">
+                                            JSON
+                                        </a>
+                                    </div>
+                                </div>
+                            </nav>
+                            <div class="content-display">
+                                <div id="json"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box" id="ugc-tree">
+                            <nav class="navbar navbar-default" style="height:50px">
+                                <div class="container-fluid">
+                                    <div class="navbar-header">
+                                        <a class="navbar-brand">
+                                            UGC
+                                        </a>
+
+                                    </div>
+
+                                </div>
+
+                            </nav>
+                        
+                         
+                            <div id = "ugcContainer" class="content-display">
+                                <div id="tree2"></div>
+                            </div>
+    <!--
+                            <div class="form-group">
+                                            <label for="usr">Display:</label>
+                                            <input id="size" type="text" class="form-control" id="usr">
+                            </div>
+    -->
+                        </div> 
+        </form>      
     </div>
 </div>
+

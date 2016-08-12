@@ -7,6 +7,8 @@ public interface SRPResource {
     boolean getHasChildren();
 
     List<SRPResource> getChildren();
+    
+    List<SRPResource> getContentChildren();
 
     Map<String, Property> getProperties();
 

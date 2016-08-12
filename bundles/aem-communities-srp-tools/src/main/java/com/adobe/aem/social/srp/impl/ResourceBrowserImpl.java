@@ -15,24 +15,26 @@ import com.adobe.cq.social.srp.utilities.api.SocialResourceUtilities;
 @Component
 public class ResourceBrowserImpl implements ResourceBrowser {
 
-	@Reference
-	SocialResourceUtilities socialUtils;
-	
+    @Reference
+    SocialResourceUtilities socialUtils;
 
-	public SRPResource getResourcesForComponent(String contentComponentPath,
-			ResourceResolver resolver) {
-		final Resource componentResource = resolver
-				.getResource(contentComponentPath);
-		final String ugcResourcePath = socialUtils
-				.resourceToUGCStoragePath(componentResource);
-		final SocialResourceProvider srp = socialUtils
-				.getSocialResourceProvider(componentResource);
-		srp.setConfig(socialUtils.getStorageConfig(componentResource));
-		return new SRPResourceImpl(ugcResourcePath, resolver, socialUtils, srp);
-	}
+    public SRPResource getResourcesForComponent(String contentComponentPath, ResourceResolver resolver, int offset,
+        int size) {
+        final Resource componentResource = resolver.getResource(contentComponentPath);
+        final SocialResourceProvider srp = socialUtils.getSocialResourceProvider(componentResource);
+        srp.setConfig(socialUtils.getStorageConfig(componentResource));
+        return new SRPResourceImpl(contentComponentPath, resolver, socialUtils, srp, offset, size);
+    }
 
-	public SRPResource getUGCResource(String ugcPath, ResourceResolver resolver) {
-		return null;
-	}
+    public SRPResource getUGCResource(String ugcPath, ResourceResolver resolver) {
+        return null;
+    }
+
+    public SRPResource getResourcesForComponent(String contentComponentPath, ResourceResolver resolver) {
+        final Resource componentResource = resolver.resolve(contentComponentPath);
+        final SocialResourceProvider srp = socialUtils.getSocialResourceProvider(componentResource);
+        srp.setConfig(socialUtils.getStorageConfig(componentResource));
+        return new SRPResourceImpl(contentComponentPath, resolver, socialUtils, srp);
+    }
 
 }
