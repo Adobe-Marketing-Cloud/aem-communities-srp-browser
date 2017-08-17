@@ -18,7 +18,7 @@
         <tag>HEAD</tag>
     </scm>
     <properties>
-        <install.target>/apps/acme/install</install.target>
+        <install.target>/apps/srp-tools/install</install.target>
     </properties>
 
     <!-- ====================================================================== -->
